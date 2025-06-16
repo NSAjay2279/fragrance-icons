@@ -359,6 +359,29 @@
         return container;
     }
 
+    // Helper function to find the best matching icon for a note
+    function findBestMatchingIcon(note) {
+        const normalizedNote = note.toLowerCase();
+        
+        // Try exact match first
+        if (noteIcons[normalizedNote]) {
+            return noteIcons[normalizedNote];
+        }
+        
+        // Known fragrance keywords that we have icons for
+        const knownFragrances = Object.keys(noteIcons).filter(key => key !== 'default');
+        
+        // Try to find a matching fragrance keyword in the note name
+        for (const fragrance of knownFragrances) {
+            if (normalizedNote.includes(fragrance)) {
+                return noteIcons[fragrance];
+            }
+        }
+        
+        // If no match found, return default icon
+        return noteIcons.default;
+    }
+
     function createNoteElement(note) {
         const noteDiv = document.createElement('div');
         noteDiv.className = 'note-item';
@@ -367,8 +390,7 @@
         iconContainer.className = 'note-icon';
         
         const img = document.createElement('img');
-        const noteKey = note.toLowerCase();
-        img.src = noteIcons[noteKey] || noteIcons.default;
+        img.src = findBestMatchingIcon(note);
         img.alt = note;
         img.loading = 'lazy';
         
